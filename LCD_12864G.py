@@ -1,5 +1,4 @@
-
-import machine,font
+import machine,_lib,font
 from machine import Pin,I2C,SPI
 import math,framebuf,time
 class _framebuf:
@@ -78,7 +77,6 @@ class LCD_12864G(_framebuf):
       self.write_cmd(0x2f)# /*升压步聚 3*/
       time.sleep_us(5)#
       self.write_cmd(0x27)# /*粗调对比度，可设置范围 0x20～0x27*/
-
       self.write_cmd(0x81)# /*微调对比度*/
       self.write_cmd(0x2a)# /*0x1a,微调对比度的值，可设置范围 0x00～0x3f*/
       self.write_cmd(0xa2)# /*1/9 偏压比（bias）*/
@@ -95,36 +93,22 @@ class LCD_12864G(_framebuf):
       super().__init__()
 
       #0xA0：常规 列地址从左到右，
-
       #0xA1：反转：列地址从右到左
-
       #0xA6：常规：正显
-
       #0xA7：反显 
-
       #0xA4：常规 显示全部点阵
-
       #0xA5：显示全部点阵 
-
       #0XE2 :软件复位。
-
       #0XC0:普通扫描顺序：从上到下
-
       #0XC8:反转扫描顺序：从下到上
-
       #0x20～0x27，粗调 数值越大对比度越浓，越小越淡
       #0x00～0x3F,微调 值越大对比 度越浓，越小越淡
       #0xAC: 关, 0xAD: 开。静态图标的开关设置
-
  
     #/*全屏清屏*/
     def clear_screen(self):
-         for i in range(1
-         
-         ,8):
-             self.lcd_address(0,i)
+             self.lcd_address(0,1)
              self.write_data(128)
-         self.lcd_address(0,0)
 
    
     def write_cmd(self,cmd):
@@ -152,11 +136,8 @@ class LCD_12864G(_framebuf):
 
 #/*显示点阵图像、汉字、生僻字或 32x32 点阵的其他图标*/
       #arr :  16进制数组 0xff
-
       #width: 字符画宽度
-
       #x:     x坐标
-
       #column:行 一行8个像素所以64像素就是8行
 
     def draw(self,arr,width,x=0,column=1):
@@ -166,26 +147,7 @@ class LCD_12864G(_framebuf):
         column+=1
         self.write_data(arr[index:index+width])
         index+=width
-
-        
-
-
-
-
-
         self.lcd_address(x,column)
         column+=1
         self.write_data(arr[index:index+width])
         index+=width
-
-        
-
-
-
-
-
-
-
-
-
-
