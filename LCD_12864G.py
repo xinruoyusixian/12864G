@@ -1,8 +1,9 @@
 
 
 
-import machine,_lib,font
-from machine import Pin,I2C,SPI
+
+import machine
+from machine import Pin,SPI
 import framebuf,time,micropython
 
 
@@ -28,10 +29,6 @@ class _framebuf:
     def show(self):                               #显示到屏幕
         self.draw(self.buffer,128,1,1)
 
-        
-
-
-
     @micropython.native  
     def pic(self,arr,width,x=0,y=0):             #显示字符画或者汉字
         x1=x
@@ -41,9 +38,11 @@ class _framebuf:
         for a in a_times:
                if arr[a]!=0:
                   #p=str("%08d" %  int(bin(arr[a]).replace('0b','')) ) #16进制转二进制方法
+
                   p=bin(arr[a]).replace('0b','')   #16进制转二进制方法
                   while len(p)<8:
                       p='0'+p
+
                   #for b in bit:
                   #   self.pixel(x1,y+b,int(p[7-b])) #倒排输出像素点到屏幕
                   self.pixel(x1,y+0,int(p[7]))
@@ -91,11 +90,11 @@ class _framebuf:
 """
                 
 class LCD_12864G(_framebuf):
-    def __init__(self):
+    def __init__(self,cs=4,reset=5,rs=16):
       #引脚定义
-      self.cs=Pin(4)   #片选 可以不要 
-      self.reset=Pin(5)  #复位
-      self.rs=Pin(16)    #数据/指令 1数据 0 指令  #DC
+      self.cs=Pin(cs)   #片选 可以不要 
+      self.reset=Pin(reset)  #复位
+      self.rs=Pin(rs)    #数据/指令 1数据 0 指令  #DC
       self.sda=Pin(13)  #数据信号
       self.sck=Pin(14)    #时钟信号
       self.spi = SPI(1, baudrate=1000000, polarity=1, phase=1) #硬件实现
@@ -192,10 +191,3 @@ class LCD_12864G(_framebuf):
         column+=1
         self.write_data(arr[index:index+width])
         index+=width
-
-        
-
-
-
-
-
