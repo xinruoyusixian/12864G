@@ -30,6 +30,8 @@ class _framebuf:
 
         
 
+
+
     @micropython.native  
     def pic(self,arr,width,x=0,y=0):             #显示字符画或者汉字
         x1=x
@@ -127,6 +129,7 @@ class LCD_12864G(_framebuf):
         self.write_cmd(0x27-a)
       self.write_cmd(0xA7) #反显
       self.write_cmd(0x24)
+      self.clear_screen()
       super().__init__()
 
       #0xA0：常规 列地址从左到右，
@@ -144,7 +147,8 @@ class LCD_12864G(_framebuf):
  
     #/*全屏清屏*/
     def clear_screen(self):
-             self.lcd_address(0,1)
+      for i  in range (1,9):
+             self.lcd_address(0,i)
              self.write_data(128)
 
    
@@ -188,3 +192,10 @@ class LCD_12864G(_framebuf):
         column+=1
         self.write_data(arr[index:index+width])
         index+=width
+
+        
+
+
+
+
+
