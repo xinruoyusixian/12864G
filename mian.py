@@ -82,11 +82,7 @@ def loop(t= 10):
         draw(font.wk[_t[6]],16,32,3)
         num(str("%02d" % _t[0])+str("-%02d" % _t[1])+str(":%02d" % _t[2])  ,font.num8x8,8,50,3)
         num(s,font.num16x32,16,0,5) 
-@timed_function
-def pic():
-  display.pic(font.hlwd[0],32,0,32)
-
-pic()
+        
 _lib.update_time()
 loop()
 
@@ -103,3 +99,16 @@ def fbuf():
     display.fill_rect(10,10,82,8,0)
     display.text(str(time.ticks_us()),10,10)
     display.show()
+
+  
+
+
+
+
+
+
+
+
+
+
+
