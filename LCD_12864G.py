@@ -2,8 +2,9 @@
 
 
 
-import machine
-from machine import Pin,SPI
+
+import machine,_lib,font
+from machine import Pin,I2C,SPI
 import framebuf,time,micropython
 
 
@@ -28,6 +29,10 @@ class _framebuf:
         self._framebuf.pixel(x, y, col)
     def show(self):                               #显示到屏幕
         self.draw(self.buffer,128,1,1)
+
+        
+
+
 
     @micropython.native  
     def pic(self,arr,width,x=0,y=0):             #显示字符画或者汉字
@@ -92,7 +97,7 @@ class _framebuf:
 class LCD_12864G(_framebuf):
     def __init__(self,cs=4,reset=5,rs=16):
       #引脚定义
-      self.cs=Pin(cs)   #片选 可以不要 
+      self.cs=Pin(cs)   #片选 保持高电平即可 
       self.reset=Pin(reset)  #复位
       self.rs=Pin(rs)    #数据/指令 1数据 0 指令  #DC
       self.sda=Pin(13)  #数据信号
