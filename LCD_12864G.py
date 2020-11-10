@@ -1,7 +1,11 @@
 
+
+
 import machine,_lib,font
 from machine import Pin,I2C,SPI
-import math,framebuf,time
+import framebuf,time,micropython
+
+
 class _framebuf:
     def __init__(self):
         width=128
@@ -18,40 +22,72 @@ class _framebuf:
         self.fill=self._framebuf.fill             # 全屏填充  fill( col 是否填充[0 or 1])
     def text(self,str,x=0,y=0):                   # 英文文字输入
         self._framebuf.text(str, x, y, 1)   
-        
+ 
     def pixel(self, x, y, col=1):                 #像素填充
         self._framebuf.pixel(x, y, col)
-        
     def show(self):                               #显示到屏幕
         self.draw(self.buffer,128,1,1)
-      
+
+        
+
+    @micropython.native  
     def pic(self,arr,width,x=0,y=0):             #显示字符画或者汉字
         x1=x
-        for a in range(0,len(arr)):
+        _len=len(arr)
+        #bit=[0,1,2,3,4,5,6,7,8]  #减少range次数 提高性能
+        a_times=range(0,_len) #减少range次数 提高性能
+        for a in a_times:
                if arr[a]!=0:
                   #p=str("%08d" %  int(bin(arr[a]).replace('0b','')) ) #16进制转二进制方法
                   p=bin(arr[a]).replace('0b','')   #16进制转二进制方法
                   while len(p)<8:
                       p='0'+p
-                  for b in range(0,8):
-                     self.pixel(x1,y+b,int(p[7-b])) #倒排输出像素点到屏幕
+                  #for b in bit:
+                  #   self.pixel(x1,y+b,int(p[7-b])) #倒排输出像素点到屏幕
+                  self.pixel(x1,y+0,int(p[7]))
+                  self.pixel(x1,y+1,int(p[6]))
+                  self.pixel(x1,y+2,int(p[5]))
+                  self.pixel(x1,y+3,int(p[4]))
+                  self.pixel(x1,y+4,int(p[3]))
+                  self.pixel(x1,y+5,int(p[2]))
+                  self.pixel(x1,y+6,int(p[1]))
+                  self.pixel(x1,y+7,int(p[0]))                    
                x1+=1
                if a % 32==0 and a !=0 :
                    y+=8
-                   x1=x 
-    def pic1(self,arr,width,x=0,y=0):
-          l=len(arr)//width
+                   x1=x
+                   
+"""
+    @micropython.native
+    def pic(self,arr,width,x=0,y=0):  #字符画方法2
+          l=range(0,len(arr)//width)
           i=0
-          for b in range(0,l):
-              for x1 in range(0,width):
+          #bit=[0,1,2,3,4,5,6,7,8] 
+          x1_range=range(0,width)
+          for b in l: 
+              yb=b*8
+              for x1 in x1_range:
                 if arr[i] != 0 :
                       p=bin(arr[i]).replace('0b','')
+                      x2=x+x1
                       while len(p)<8:
                           p='0'+p
-                      for a in range(0,8):
-                         self.pixel(x1+x,a+b*8,int(p[7-a]))
-                         
-                i+=1                   
+                      #for a in bit:  #丢掉for 节省100ms 时间
+                      #   self.pixel(x1+x,a+b*8,int(p[7-a]))
+                      self.pixel(x2,yb+0,int(p[7]))
+                      self.pixel(x2,yb+1,int(p[6]))
+                      self.pixel(x2,yb+2,int(p[5]))
+
+                      self.pixel(x2,yb+3,int(p[4]))
+                      self.pixel(x2,yb+4,int(p[3]))
+                      self.pixel(x2,yb+5,int(p[2]))
+                      self.pixel(x2,yb+6,int(p[1]))
+                      self.pixel(x2,yb+7,int(p[0]))                         
+                             
+                i+=1 
+                
+"""
+                
 class LCD_12864G(_framebuf):
     def __init__(self):
       #引脚定义
