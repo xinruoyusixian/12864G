@@ -3,6 +3,8 @@
 
 
 
+
+
 import machine,_lib,font
 from machine import Pin,I2C,SPI
 import framebuf,time,micropython
@@ -153,7 +155,7 @@ class LCD_12864G(_framebuf):
     def clear_screen(self):
       for i  in range (1,9):
              self.lcd_address(0,i)
-             self.write_data(128)
+             self.write_data(129)
 
    
     def write_cmd(self,cmd):
@@ -187,7 +189,8 @@ class LCD_12864G(_framebuf):
 
     def draw(self,arr,width,x=0,column=1):
       index=0
-      for a in range(0,len(arr)/width):
+      l=range(0,int(len(arr)/width))
+      for a in l:
         self.lcd_address(x,column)
         column+=1
         self.write_data(arr[index:index+width])
@@ -196,3 +199,18 @@ class LCD_12864G(_framebuf):
         column+=1
         self.write_data(arr[index:index+width])
         index+=width
+
+
+    def flip(self,arr,w):  #图片字体 翻转180度
+        tmp=[]
+        tmp2=[]
+        r=range(0,len(arr)//w)
+        for i   in r:
+            x=i*w
+            tmp.append(arr[i*w:x+w])
+        r=range (0,len(tmp))
+        for j in r:
+            tmp[j]=tmp[j][::-1]
+            tmp2+=tmp[j]
+        return tmp2
+
