@@ -1,9 +1,27 @@
 
-import machine,_lib,font
+
+
+
+
+
+
+
+import machine,_lib,gc
 from machine import Pin
 import framebuf,time,micropython
 
 
+def get_string(s):
+      #在指定位置写入8*8的文字 会自动向后显示文字
+      #绘画时宽度应为8x字符跟个数
+      l=len(s)
+      w=l*8
+      h=8
+      buffer0= bytearray(((h // 8) * w) )
+      fbuf = framebuf.FrameBuffer(memoryview(buffer0), w, h, framebuf.MONO_VLSB)
+      fbuf.text(s, 0, 0, 0xffff)
+      return  (buffer0,l)  
+      
 class _framebuf:
     def __init__(self):
         width=128
@@ -26,7 +44,6 @@ class _framebuf:
     def show(self):                               #显示到屏幕
         self.draw(self.buffer,128,1,1)
 
-        
 
 
 
@@ -194,6 +211,8 @@ class LCD_12864G(_framebuf):
         self.write_data(arr[index:index+width])
         index+=width
 
+        
+
 
 
     def flip(self,arr,w):  #图片字体 翻转180度
@@ -215,4 +234,22 @@ class LCD_12864G(_framebuf):
             print(tmp[j])
             tmp2+=tmp[j]
         return tmp2
+
+    def get_string(self,s):
+        #"在指定位置写入8像素高的文字,\r绘画时 时宽度应为8x字符个数"
+        l=len(s)
+        w=l*8
+        h=8
+        buffer0= bytearray(((h // 8) * w) )
+        fbuf = framebuf.FrameBuffer(memoryview(buffer0), w, h, framebuf.MONO_VLSB)
+        fbuf.text(s, 0, 0, 0xffff)
+        return  (buffer0,l)        
+
+
+
+
+
+
+
+
 
