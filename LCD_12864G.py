@@ -237,13 +237,12 @@ class LCD_12864G(_framebuf):
 
     def get_string(self,s):
         #"在指定位置写入8像素高的文字,\r绘画时 时宽度应为8x字符个数"
-        l=len(s)
-        w=l*8
+        w=len(s)*8
         h=8
         buffer0= bytearray(((h // 8) * w) )
         fbuf = framebuf.FrameBuffer(memoryview(buffer0), w, h, framebuf.MONO_VLSB)
         fbuf.text(s, 0, 0, 0xffff)
-        return  (buffer0,l)        
+        return  (buffer0,w)        
 
 
 
