@@ -1,12 +1,6 @@
 
-
-
-
-
-
-
 import machine,_lib,font
-from machine import Pin,I2C,SPI
+from machine import Pin
 import framebuf,time,micropython
 
 
@@ -97,14 +91,14 @@ class _framebuf:
 """
                 
 class LCD_12864G(_framebuf):
-    def __init__(self,cs=4,reset=5,rs=16):
+    def __init__(self,spi,cs=4,reset=5,rs=16):
       #引脚定义
       self.cs=Pin(cs)   #片选 保持高电平即可 
       self.reset=Pin(reset)  #复位
       self.rs=Pin(rs)    #数据/指令 1数据 0 指令  #DC
       self.sda=Pin(13)  #数据信号
       self.sck=Pin(14)    #时钟信号
-      self.spi = SPI(1, baudrate=1000000, polarity=1, phase=1) #硬件实现
+      self.spi = spi #硬件实现
       self.rate = 20 * 1024 * 1024
       self.rs.init(self.rs.OUT, value=0)
       self.reset.init(self.reset.OUT, value=0)
@@ -201,16 +195,24 @@ class LCD_12864G(_framebuf):
         index+=width
 
 
+
     def flip(self,arr,w):  #图片字体 翻转180度
+
         tmp=[]
+
         tmp2=[]
+
         r=range(0,len(arr)//w)
+
         for i   in r:
+
             x=i*w
+
             tmp.append(arr[i*w:x+w])
         r=range (0,len(tmp))
         for j in r:
             tmp[j]=tmp[j][::-1]
+            print(tmp[j])
             tmp2+=tmp[j]
         return tmp2
 
