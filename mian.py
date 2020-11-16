@@ -1,18 +1,11 @@
 
-
-
-
-
-
-
-
-
 # main.py -- put your code herfr
 from LCD_12864G import LCD_12864G
 import time,framebuf,_lib,font,ujson
-from machine import Pin 
+from machine import Pin,SPI
 from urequests import get
-display=LCD_12864G()
+spi=SPI(1, baudrate=1000000, polarity=1, phase=1)
+display=LCD_12864G(spi=spi,rs=15,reset=16)
 draw=display.draw
 
 
@@ -21,7 +14,9 @@ def get_weather():
         data =  ujson.loads(get("http://www.tianqiapi.com/free/day?appid=75982964&appsecret=XtOL4MxG").text)
         print("Weather Update")
         return data
+
   except:
+
     print("geng xin shi bai !")
 def get_string(s):
       #在指定位置写入8*8的文字 会自动向后显示文字
@@ -64,30 +59,7 @@ def timed_function(f, *args, **kwargs):
         return result
     return new_func  
 
-
-def loop(t= 10):
-    i=1
-    while 1:
-      if i==300:
-        _lib.update_time()
-        i=1
-      i+=1
-      for a in range(0,100):
-        _t=time.localtime()
-        s=str("%02d" % _t[3])+str(":%02d" % _t[4])+str(":%02d" % _t[5])  
-        time.sleep_ms(t)
-        draw(font.icon8x8['arrow'],8,a,2)
-        draw(font.xq[0],16,0,3)
-        draw(font.xq[1],16,16,3)
-        draw(font.wk[_t[6]],16,32,3)
-        num(str("%02d" % _t[0])+str("-%02d" % _t[1])+str(":%02d" % _t[2])  ,font.num8x8,8,50,3)
-        num(s,font.num16x32,16,0,5) 
-        
-_lib.update_time()
-loop()
-
-
-def fbuf():
+def f1():
   while 1:
     
     display.fill_rect(0,0,64,8,0)
@@ -104,11 +76,34 @@ def fbuf():
 
 
 
+font.icon8x8['arrow']=display.flip(font.icon8x8['arrow'],8)
+def loop(t= 1):
+    i=1
+    while 1:
+      if i==300  or i==1:
+        _lib.update_time()
+        _t=time.localtime()
+        draw(font.xq[0],16,0,3)
+        draw(font.xq[1],16,16,3)
+        draw(font.wk[_t[6]],16,32,3)
+        num(str("%02d" % _t[0])+str("-%02d" % _t[1])+str(":%02d" % _t[2])  ,font.num8x8,8,50,3)
+        if i==300:
+          i=1
+      
+      for a in range(0,146):
+        _t=time.localtime()
+        s=str("%02d" % _t[3])+str(":%02d" % _t[4])+str(":%02d" % _t[5])  
+        time.sleep_ms(t)
+        draw(font.icon8x8['arrow'],8,128-a,1)
+        draw(font.icon8x8['arrow'],8,128-a,2)
+        draw(font.icon16x16['fly'],16,a-16,1)
+        num(s,font.num16x32,16,0,5)
+        if a>=130:
+          draw(font.icon32x32['cat'],32,48,5)
+      i+=1 
 
-
-
-
-
-
+        
+_lib.update_time()
+loop()
 
 
