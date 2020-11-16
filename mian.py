@@ -1,10 +1,29 @@
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # main.py -- put your code herfr
 from LCD_12864G import LCD_12864G
 import time,framebuf,_lib,font,ujson
 from machine import Pin,SPI
 from urequests import get
-spi=SPI(1, baudrate=1000000, polarity=1, phase=1)
+#spi=SPI(1, baudrate=1000000, polarity=1, phase=1)#
+spi = SPI(baudrate=100000, polarity=1, phase=0, sck=Pin(14), mosi=Pin(13), miso=Pin(0 ))
 display=LCD_12864G(spi=spi,rs=15,reset=16)
 draw=display.draw
 
@@ -19,14 +38,13 @@ def get_weather():
 
     print("geng xin shi bai !")
 def get_string(s):
-      #在指定位置写入8*8的文字 会自动向后显示文字
+      "在指定位置写入8像素高的文字,\r绘画时 时宽度应为8x字符个数"
       w=len(s)*8
       h=8
-      buffer0= bytearray(((h // 8) * w) + 1)
-      buffer0[0] = 0x40  
-      fbuf = framebuf.FrameBuffer(memoryview(buffer0)[1:], w, h, framebuf.MONO_VLSB)
+      buffer0= bytearray(((h // 8) * w) )
+      fbuf = framebuf.FrameBuffer(memoryview(buffer0), w, h, framebuf.MONO_VLSB)
       fbuf.text(s, 0, 0, 0xffff)
-      return  buffer0  
+      return  (buffer0,w)  
 
 def num(numbers,zimo,width=8,x=0,y=1):
   length=len(numbers)
@@ -79,9 +97,11 @@ def f1():
 font.icon8x8['arrow']=display.flip(font.icon8x8['arrow'],8)
 def loop(t= 1):
     i=1
+    
     while 1:
       if i==300  or i==1:
         _lib.update_time()
+        tmp=_lib.dhts(5,11)
         _t=time.localtime()
         draw(font.xq[0],16,0,3)
         draw(font.xq[1],16,16,3)
@@ -98,12 +118,40 @@ def loop(t= 1):
         draw(font.icon8x8['arrow'],8,128-a,2)
         draw(font.icon16x16['fly'],16,a-16,1)
         num(s,font.num16x32,16,0,5)
-        if a>=130:
+        if a>=140:
           draw(font.icon32x32['cat'],32,48,5)
+        if a==120:
+            s=display.get_string("tmpr:%s,"%(tmp[0]))
+            draw(s[0],s[1],30,)
+            s=display.get_string("humid:%s"%(tmp[1]))
+            draw(s[0],s[1],40,2)
       i+=1 
 
         
 _lib.update_time()
 loop()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
