@@ -6,15 +6,23 @@
 
 
 
+
 import machine,_lib,gc
 from machine import Pin
 import framebuf,time,micropython
 
 
+
+
+
 def get_string(s):
+
       #在指定位置写入8*8的文字 会自动向后显示文字
+
       #绘画时宽度应为8x字符跟个数
+
       l=len(s)
+
       w=l*8
       h=8
       buffer0= bytearray(((h // 8) * w) )
@@ -23,9 +31,9 @@ def get_string(s):
       return  (buffer0,l)  
       
 class _framebuf:
-    def __init__(self):
-        width=128
-        height=64 
+    def __init__(self,width=128,height=64):
+        self.width=width
+        self.height=height
         self.buffer =  bytearray(((height // 8) * width) )
         self._framebuf = framebuf.FrameBuffer1(memoryview(self.buffer), width, height)   
         self.hline = self._framebuf.hline         # 横线     hline(x,y,长度,是否填充[0 or 1])
@@ -243,6 +251,7 @@ class LCD_12864G(_framebuf):
         fbuf = framebuf.FrameBuffer(memoryview(buffer0), w, h, framebuf.MONO_VLSB)
         fbuf.text(s, 0, 0, 0xffff)
         return  (buffer0,w)        
+
 
 
 
